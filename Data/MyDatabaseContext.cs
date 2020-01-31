@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace DotNetCoreSqlDb.Models
 {
@@ -11,6 +7,12 @@ namespace DotNetCoreSqlDb.Models
         public MyDatabaseContext (DbContextOptions<MyDatabaseContext> options)
             : base(options)
         {
+            var conn = (System.Data.SqlClient.SqlConnection)Database.GetDbConnection();
+            string accesstoken = new Microsoft.Azure.Services.AppAuthentication.AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/").Result;
+            //if the user belogns to more subscriptions/tenants, add tenantID
+            //string accesstoken = new Microsoft.Azure.Services.AppAuthentication.AzureServiceTokenProvider().GetAccessTokenAsync("https://database.windows.net/", "<tenantid>").Result;
+            conn.AccessToken = accesstoken;
+            
         }
 
         public DbSet<DotNetCoreSqlDb.Models.Todo> Todo { get; set; }
